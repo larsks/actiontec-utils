@@ -64,13 +64,25 @@ class Parser(object):
             else:
                 self.accumulate(c)
 
+def dictify (data):
+    print len(data), data
+
+    for datum in data:
+        try:
+            k,v = datum
+            print 'k',k,'v',v
+            vv = dictify(v)
+            return {k: vv}
+        except ValueError:
+            return datum[0]
+
 def main():
     opts = parse_args()
 
     p = Parser()
     p.parse(sys.stdin.read())
-
     pprint.pprint(p.stack)
+    pprint.pprint( dictify(p.stack))
 
 if __name__ == '__main__':
     main()
