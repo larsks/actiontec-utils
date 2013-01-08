@@ -3,51 +3,83 @@
 import os
 import sys
 import argparse
-import pprint
 
-def parse_args():
-    p = argparse.ArgumentParser()
-    return p.parse_args()
+def dictify(data):
+    '''Convert the tree structure produced by the OpenRG
+    `conf print` command into a Python dictionary.'''
+
+    try:
+        k, v = data[0], data[1:]
+    except IndexError:
+        return {}
+
+    if len(v) == 0:
+        return {k: {}}
+    elif len(v) == 1 and len(v[0]) == 1:
+        return {k: v[0][0]}
+    else:
+        new = {}
+        for datum in v:
+            new.update(dictify(datum))
+        return {k: new}
+
+def lookup(d, path):
+    '''Given a nested dictionary (such as that returned by dictify(),
+    above) and a path in the form 'key/key/key', return the value of
+    d[key][key][key].  For examaple:
+        
+        >>> parens.lookup(p.asdict(), 'fw/policy/0/chain/access_ctrl_block')
+        {'output': '0', 'type': '4',
+        'description': 'Access Control - Block',
+        'rule': {}}
+    '''
+
+    path = path.split('/')
+    if len(path) == 1:
+        return d[path[0]]
+    else:
+        return lookup(d[path[0]], '/'.join(path[1:]))
 
 class Parser(object):
-    def __init__(self):
-        self.reset()
+    '''Parses the parenthesized tree returned by the OpenRG
+    `conf print` command.  After parsing, the `data` attribute will 
+    contain a Python list equivalent to the original data and the
+    `asdict()` method will return the configuration as a dictionary.'''
 
     def reset(self):
-        self.data = {}
+        self.acc = []
+        self.data = []
         self.stack = []
-        self.acc = []
-        self.prev = []
-        self.cur = self.stack
+        self.cur = self.data
 
-    def accumulate(self, x):
-        self.acc.append(x)
+    def accumulate(self, c):
+        self.acc.append(c)
 
-    def acc_value(self):
-        val = ''.join(self.acc).strip()
+    def token(self):
+        t = ''.join(self.acc).strip()
         self.acc = []
-        return val
+        return t
 
     def handle_open_paren(self):
-        v = self.acc_value()
-        if v:
-            self.cur.append(v)
-        newlist = []
-        self.cur.append(newlist)
-        self.prev.append(self.cur)
-        self.cur = newlist
+        tok = self.token()
+        if tok:
+            self.cur.append(tok)
+
+        self.stack.append(self.cur)
+        self.cur.append([])
+        self.cur = self.cur[-1]
 
     def handle_close_paren(self):
-        v = self.acc_value()
-        if v:
-            self.cur.append(v)
+        tok = self.token()
+        if tok:
+            self.cur.append(tok)
+        if self.stack:
+            self.cur = self.stack.pop()
 
-        self.cur = self.prev.pop()
-
-    def parse(self,data):
+    def parse(self, data):
         self.reset()
-
-        last_was_space=False
+        
+        last_was_space = False
 
         for c in data:
             if not c.isspace():
@@ -57,34 +89,35 @@ class Parser(object):
                 self.handle_open_paren()
             elif c == ')':
                 self.handle_close_paren()
-            elif c.isspace():
-                if not last_was_space:
-                    self.accumulate(c)
-                last_was_space = True
             else:
-                self.accumulate(c)
+                if not c.isspace() or not last_was_space:
+                    self.accumulate(c)
 
-def dictify (data):
-    print len(data), data
+    def asdict(self):
+        return dictify(self.data[0])
 
-    for datum in data:
-        try:
-            k,v = datum
-            print 'k',k,'v',v
-            vv = dictify(v)
-            return {k: vv}
-        except ValueError:
-            return datum[0]
+def parse_args():
+    p = argparse.ArgumentParser()
+    return p.parse_args()
 
 def main():
     opts = parse_args()
 
+    # Read in the configuration.
+    data = sys.stdin.read()
+
+    # Get a parser object.
     p = Parser()
-    p.parse(sys.stdin.read())
-    pprint.pprint(p.stack)
-    pprint.pprint( dictify(p.stack))
+
+    # Parse the data.
+    p.parse(data)
+
+    # At this point, p.data has the verbatim tree structure
+    # and p.asdict() will return the structure converted to
+    # a dictionary.
+    import pprint
+    pprint.pprint(p.asdict())
 
 if __name__ == '__main__':
     main()
-
 
