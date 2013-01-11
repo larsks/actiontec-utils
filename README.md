@@ -1,7 +1,7 @@
 # ActionTec Utilities
 
 This is collection of tools for interacting with your ActionTec
-MI424WR (Verizon FIOS) modem via the command line.
+MI424WR (Verizon FIOS) router via the command line.
 
 **NOTE**: Only the `conf` and `exec` subcommands are fully implemented at this
 time.
