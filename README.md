@@ -3,6 +3,9 @@
 This is collection of tools for interacting with your ActionTec
 MI424WR (Verizon FIOS) modem via the command line.
 
+**NOTE**: Only the `conf` subcommand is fully implemented at this
+time.
+
 ## Configuration
 
 The `actiontec` command needs a configuration file to provide
