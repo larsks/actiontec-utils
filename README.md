@@ -35,7 +35,7 @@ Or by setting the `ACTIONTEC_CONFIG` environment variable:
 You can use the `exec` subcommand to execute commands in the router
 command shell.
 
-- exec <command>
+- `exec <command>`
 
 #### Examples
 
@@ -47,10 +47,10 @@ Display a process listing:
 
 The `conf` command provides the following subcommands:
 
-- conf show [ --keys-only ] [ --prefix <prefix> ] <path> [ <path> ... ]
-- conf del [ --prefix <prefix> ] <path> [ <path> ... ]
-- conf set [ --prefix <prefix> ] <path> <value> [ <path> <value> ... ]
-- conf commit
+- `conf show [ --keys-only ] [ --prefix <prefix> ] <path> [ <path> ... ]`
+- `conf del [ --prefix <prefix> ] <path> [ <path> ... ]`
+- `conf set [ --prefix <prefix> ] <path> <value> [ <path> <value> ... ]`
+- `conf commit`
 
 #### Examples
 
@@ -95,28 +95,28 @@ Get information about DHCP leases:
 
 ### Firewall commands
 
-- fw enable
-- fw disable
-- fw apply <rules>
-- fw list
-- fw clear
-- fw block ( --out | --in ) <ip>
-- fw unblock ( --out | --in ) <ip>
+- `fw enable`
+- `fw disable`
+- `fw apply <rules>`
+- `fw list`
+- `fw clear`
+- `fw block ( --out | --in ) <ip>`
+- `fw unblock ( --out | --in ) <ip>`
 
 ### DNS commands
 
-- dns add <host> <addr>
-- dns del <host>
+- `dns add <host> <addr>`
+- `dns del <host>`
 
 ### DHCP server commands
 
-- dhcp show [ ( --host <host> | --mac <mac> | --ip <ip> ) ]
-- dhcp del ( --host <host> | --mac <mac> | --ip <ip> )
-- dhcp set ( --host <host> | --mac <mac> | --ip <ip> ) <attr> <val>
+- `dhcp show [ ( --host <host> | --mac <mac> | --ip <ip> ) ]`
+- `dhcp del ( --host <host> | --mac <mac> | --ip <ip> )`
+- `dhcp set ( --host <host> | --mac <mac> | --ip <ip> ) <attr> <val>`
 
 ### Routing commands
 
-- route show
-- route add <dest> <mask> <gw> [ <metric> ]
-- route del <dest> <mask> <gw>
+- `route show`
+- `route add <dest> <mask> <gw> [ <metric> ]`
+- `route del <dest> <mask> <gw>`
 
