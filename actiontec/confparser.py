@@ -86,5 +86,6 @@ class Parser(object):
                 if not c.isspace() or not last_was_space:
                     self.accumulate(c)
 
-        return FirewallConfig(dictify(self.data[0]))
+        if self.data:
+            return FirewallConfig(dictify(self.data[0]))
 
