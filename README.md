@@ -114,12 +114,33 @@ Get information about DHCP leases:
 ### Firewall commands
 
 - `fw enable`
+     
+     Add rules to the chain named by `fw_chain_out` in your
+     configuration that will use the `actiontec-utils` maintained 
+     firewall configuration.
+
 - `fw disable`
-- `fw apply <rules>`
+
+    Remove rules from `fw_chain_out` chain so that the 
+    `actiontec-utils` maintained firewall is no longer used.
+
 - `fw list`
+
+    Display your blacklist entries.
+
 - `fw clear`
+
+    Clear all entries from the blacklist.
+
 - `fw block ( --out | --in ) <ip>`
+
+    Add `<ip>` to the appropriate blacklist based on the
+    direction (`--in` or `--out`) and the setting of the 
+    `blacklist` option in your configuration.
+
 - `fw unblock ( --out | --in ) <ip>`
+
+  Remove `<ip>` from the appropriate blacklist.
 
 ### DNS commands
 
