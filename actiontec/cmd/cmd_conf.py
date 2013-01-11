@@ -20,6 +20,8 @@ def handle_show(at, cfg, opts):
         fwcfg = parser.parse(out)
         if len(fwcfg) == 1 and not isinstance(fwcfg.values()[0], dict):
             print fwcfg.values()[0]
+        elif opts.keys_only:
+            print '\n'.join(fwcfg[path.split('/')[-1]].keys())
         else:
             pprint.pprint(fwcfg)
 
@@ -59,6 +61,7 @@ def add_parser(parent):
     sub = parser.add_subparsers()
 
     show_parser = sub.add_parser('show')
+    show_parser.add_argument('--keys-only', '-k', action='store_true')
     show_parser.add_argument('path', nargs='+')
     show_parser.set_defaults(handler=handle_show)
 
