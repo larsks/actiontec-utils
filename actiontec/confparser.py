@@ -4,6 +4,16 @@ import os
 import sys
 import argparse
 
+class FirewallConfig (dict):
+    def lookup(self, path):
+        path = path.split('/')
+        if len(path) == 1:
+            v = d[path[0]]
+            if instance(v, dict):
+                return FirewallConfig(v)
+        else:
+            return lookup(d[path[0]], '/'.join(path[1:]))
+
 def dictify(data):
     '''Convert the tree structure produced by the OpenRG
     `conf print` command into a Python dictionary.'''
@@ -22,23 +32,6 @@ def dictify(data):
         for datum in v:
             new.update(dictify(datum))
         return {k: new}
-
-def lookup(d, path):
-    '''Given a nested dictionary (such as that returned by dictify(),
-    above) and a path in the form 'key/key/key', return the value of
-    d[key][key][key].  For examaple:
-        
-        >>> parens.lookup(p.asdict(), 'fw/policy/0/chain/access_ctrl_block')
-        {'output': '0', 'type': '4',
-        'description': 'Access Control - Block',
-        'rule': {}}
-    '''
-
-    path = path.split('/')
-    if len(path) == 1:
-        return d[path[0]]
-    else:
-        return lookup(d[path[0]], '/'.join(path[1:]))
 
 class Parser(object):
     '''Parses the parenthesized tree returned by the OpenRG
@@ -93,31 +86,5 @@ class Parser(object):
                 if not c.isspace() or not last_was_space:
                     self.accumulate(c)
 
-    def asdict(self):
-        return dictify(self.data[0])
-
-def parse_args():
-    p = argparse.ArgumentParser()
-    return p.parse_args()
-
-def main():
-    opts = parse_args()
-
-    # Read in the configuration.
-    data = sys.stdin.read()
-
-    # Get a parser object.
-    p = Parser()
-
-    # Parse the data.
-    p.parse(data)
-
-    # At this point, p.data has the verbatim tree structure
-    # and p.asdict() will return the structure converted to
-    # a dictionary.
-    import pprint
-    pprint.pprint(p.asdict())
-
-if __name__ == '__main__':
-    main()
+        return FirewallConfig(dictify(self.data[0]))
 

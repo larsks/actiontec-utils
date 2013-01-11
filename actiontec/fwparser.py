@@ -7,7 +7,6 @@ import re
 # block (in|out) on <interface> [!] from (<ip>|any) [!] to (<ip>|any) [ (reject|drop) ] [log]
 re_fw_cmd = re.compile('''
         (?P<type>(block|pass)) \s+ (?P<dir>(in|out)) \s+
-        on \s+ (?P<iface>\S+) \s+
         ((?P<neg_src>!) \s+)?
         from \s+ (?P<src>\S+) \s+
         ((?P<neg_dst>!) \s+)?
@@ -19,7 +18,7 @@ re_fw_cmd = re.compile('''
 '''
         '''
 
-def parse(rulefile, pid=0):
+def parse(rulefile, pid=0, chain='at_firewall_%s'):
     pid = int(pid)
 
     rules = []
@@ -36,13 +35,8 @@ def parse(rulefile, pid=0):
 
         rules.append(mo.groupdict())
 
-    chains = set()
-    for rule in rules:
-        chain_name='fw_%(iface)s_%(dir)s' % rule
-        chains.add(chain_name)
-
-    for chain in chains:
-        yield('conf del fw/policy/%d/chain/%s/rule' % (pid, chain))
+    for dir in [ 'in', 'out' ]:
+        yield('conf del fw/policy/%d/chain/%s/rule' % (pid, chain % dir))
 
     for i, rule in enumerate(rules):
         if rule['type'] == 'pass':
