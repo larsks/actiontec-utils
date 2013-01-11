@@ -3,7 +3,7 @@
 This is collection of tools for interacting with your ActionTec
 MI424WR (Verizon FIOS) modem via the command line.
 
-**NOTE**: Only the `conf` subcommand is fully implemented at this
+**NOTE**: Only the `conf` and `exec` subcommands are fully implemented at this
 time.
 
 ## Configuration
@@ -29,6 +29,19 @@ Or by setting the `ACTIONTEC_CONFIG` environment variable:
 [yaml]: http://www.yaml.org/
 
 ## Commands
+
+### Shell commands
+
+You can use the `exec` subcommand to execute commands in the router
+command shell.
+
+- exec <command>
+
+#### Examples
+
+Display a process listing:
+
+    $ actiontec exec system ps
 
 ### Configuration commands
 
