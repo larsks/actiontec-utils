@@ -3,7 +3,31 @@
 This is collection of tools for interacting with your ActionTec
 MI424WR (Verizon FIOS) modem via the command line.
 
-## Configuration commands
+## Configuration
+
+The `actiontec` command needs a configuration file to provide
+authentication credentials for your router.  The file is a [YAML][]
+file that should look something like this:
+
+    actiontec:
+      username: admin
+      password: secret
+
+You can specify the location of this file using the `--config` (`-f`)
+command line option:
+
+    actiontec -f router.conf ...
+
+Or by setting the `ACTIONTEC_CONFIG` environment variable:
+
+    export ACTIONTEC_CONFIG=$HOME/.actiontec
+    actiontec ...
+
+[yaml]: http://www.yaml.org/
+
+## Commands
+
+### Configuration commands
 
 The `conf` command provides the following subcommands:
 
@@ -12,7 +36,7 @@ The `conf` command provides the following subcommands:
 - conf set [ --prefix <prefix> ] <path> <value> [ <path> <value> ... ]
 - conf commit
 
-### Examples
+#### Examples
 
 Show the name of the active firewall policy:
 
@@ -53,7 +77,7 @@ Get information about DHCP leases:
     14:01:d2:5d:2f:03
     88:b3:e5:1a:00:36
 
-## Firewall commands
+### Firewall commands
 
 - fw enable
 - fw disable
@@ -63,18 +87,18 @@ Get information about DHCP leases:
 - fw block ( --out | --in ) <ip>
 - fw unblock ( --out | --in ) <ip>
 
-## DNS commands
+### DNS commands
 
 - dns add <host> <addr>
 - dns del <host>
 
-## DHCP server commands
+### DHCP server commands
 
 - dhcp show [ ( --host <host> | --mac <mac> | --ip <ip> ) ]
 - dhcp del ( --host <host> | --mac <mac> | --ip <ip> )
 - dhcp set ( --host <host> | --mac <mac> | --ip <ip> ) <attr> <val>
 
-## Routing commands
+### Routing commands
 
 - route show
 - route add <dest> <mask> <gw> [ <metric> ]
