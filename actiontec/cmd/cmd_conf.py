@@ -42,7 +42,7 @@ def handle_set(at, cfg, opts):
     for path, value in zip(i,i):
         path = '%s%s' % (opts.prefix, path)
         logging.info('set %s = %s', path, value)
-        res, out = at.run('conf set %s %s' % (path, value))
+        res, out = at.run('conf set %s "%s"' % (path, value))
         if res != 0:
             logging.error('unable to set %s = %s', path, value)
             continue
