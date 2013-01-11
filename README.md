@@ -6,6 +6,23 @@ MI424WR (Verizon FIOS) router via the command line.
 **NOTE**: Only the `conf` and `exec` subcommands are fully implemented at this
 time.
 
+## Synopsis
+
+    usage: actiontec [-h] [--debug] [--quiet] [--password PASSWORD]
+                     [--username USERNAME] [--ip IP] [--timeout TIMEOUT]
+                     [--config CONFIG]
+                     {fw,exec,conf} ...
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --debug
+      --quiet, -q
+      --password PASSWORD, -p PASSWORD
+      --username USERNAME, -u USERNAME
+      --ip IP, -i IP
+      --timeout TIMEOUT, -t TIMEOUT
+      --config CONFIG, -f CONFIG
+
 ## Configuration
 
 The `actiontec` command needs a configuration file to provide
@@ -13,6 +30,7 @@ authentication credentials for your router.  The file is a [YAML][]
 file that should look something like this:
 
     actiontec:
+      ip: 192.168.1.1
       username: admin
       password: secret
 
