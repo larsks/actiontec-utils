@@ -4,15 +4,34 @@ import os
 import sys
 import argparse
 
+def lookup(d, path):
+    path = path.split('/')
+    if len(path) == 1:
+        v = d[path[0]]
+        if isinstance(v, dict):
+            return FirewallConfig(v)
+        else:
+            return v
+    else:
+        return lookup(d[path[0]], '/'.join(path[1:]))
+
+def flatten(d, prefix=''):
+    paths = []
+
+    for k,v in d.items():
+        if isinstance(v, dict):
+            paths.extend(flatten(v, prefix='%s/%s' % (prefix, k)))
+        else:
+            paths.append(('%s/%s' % (prefix,k), v))
+
+    return paths
+
 class FirewallConfig (dict):
     def lookup(self, path):
-        path = path.split('/')
-        if len(path) == 1:
-            v = d[path[0]]
-            if instance(v, dict):
-                return FirewallConfig(v)
-        else:
-            return lookup(d[path[0]], '/'.join(path[1:]))
+        return lookup(self, path)
+
+    def flatten(self):
+        return flatten(self)
 
 def dictify(data):
     '''Convert the tree structure produced by the OpenRG
