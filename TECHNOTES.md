@@ -1,3 +1,45 @@
+## Top-level configuration keys
+
+These are possible OpenRG top level configuration keys (suitable for
+passing to the `actiontec show ...` command).  Many of these keys may
+not exist on the Verizon router, and some (such as `net_obj`) only
+exist if they contain something.
+
+Commonly used:
+
+- dev
+- fw
+- route
+- net_obj
+- dns
+- qos
+
+Less commonly used:
+
+- admin
+- wbm
+- syslog
+- service
+- interception
+- proxy
+- mcast
+- reset_history
+- rmt_upd
+- voip
+- enotify
+- email
+- watchdog
+- radius
+- cwmp
+- cert
+- upnp
+- storage_service
+- pppoe_relay
+- system
+- fs
+- manufacturer
+- internal
+
 ## Filtering on network objects
 
     {'fw_clink1_out': {'description': {},
