@@ -53,6 +53,8 @@ def main():
 
     at = ActionTec(cfg['ip'], cfg['username'], cfg['password'],
             timeout=opts.timeout)
+
+    logging.info('connecting to %s', cfg['ip'])
     at.connect()
     return opts.handler(at, cfg, opts)
 
