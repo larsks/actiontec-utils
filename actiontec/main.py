@@ -9,6 +9,7 @@ import yaml
 from connection import ActionTec
 from cmd import cmd_fw
 from cmd import cmd_exec
+from cmd import cmd_conf
 
 def parse_args():
     p = argparse.ArgumentParser()
@@ -26,6 +27,7 @@ def parse_args():
 
     cmd_fw.add_parser(sub)
     cmd_exec.add_parser(sub)
+    cmd_conf.add_parser(sub)
 
     p.set_defaults(loglevel=logging.INFO)
 
