@@ -18,7 +18,10 @@ def handle_show(at, cfg, opts):
             continue
 
         fwcfg = parser.parse(out)
-        pprint.pprint(fwcfg)
+        if len(fwcfg) == 1 and not isinstance(fwcfg.values()[0], dict):
+            print fwcfg.values()[0]
+        else:
+            pprint.pprint(fwcfg)
 
 def handle_set(at, cfg, opts):
     if opts.prefix and not opts.prefix.endswith('/'):
@@ -26,14 +29,21 @@ def handle_set(at, cfg, opts):
 
     i = iter(opts.nvpairs)
     for path, value in zip(i,i):
-        logging.debug('set %s = %s', path, value)
-        res, out = at.run('conf set %s%s %s' % (opts.prefix, path, value))
+        path = '%s%s' % (opts.prefix, path)
+        logging.info('set %s = %s', path, value)
+        res, out = at.run('conf set %s %s' % (path, value))
         if res != 0:
             logging.error('unable to set %s = %s', path, value)
             continue
 
 def handle_del(at, cfg, opts):
+    if opts.prefix and not opts.prefix.endswith('/'):
+        opts.prefix = opts.prefix + '/'
+
     for path in opts.path:
+        path = '%s%s' % (opts.prefix, path)
+        logging.info('deleting %s', path)
+
         res, out = at.run('conf del %s' % path)
         if res != 0:
             logging.error('unable to delete %s', path)
@@ -59,6 +69,7 @@ def add_parser(parent):
 
     del_parser = sub.add_parser('del')
     del_parser.add_argument('path', nargs='+')
+    del_parser.add_argument('--prefix', '-p', default='')
     del_parser.set_defaults(handler=handle_del)
 
     commit_parser = sub.add_parser('commit')
