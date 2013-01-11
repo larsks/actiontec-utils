@@ -9,15 +9,24 @@ import pprint
 from .. import confparser
 
 def handle_show(at, cfg, opts):
+    if opts.prefix and not opts.prefix.endswith('/'):
+        opts.prefix = opts.prefix + '/'
+
     parser = confparser.Parser()
 
     for path in opts.path:
+        path = '%s%s' % (opts.prefix, path)
+
         res, out = at.run('conf print %s' % path)
         if res != 0:
             logging.error('unable to show %s', path)
             continue
 
         fwcfg = parser.parse(out)
+        if not fwcfg:
+            logging.warn('no value for %s', path)
+            continue
+
         if len(fwcfg) == 1 and not isinstance(fwcfg.values()[0], dict):
             print fwcfg.values()[0]
         elif opts.keys_only:
@@ -62,6 +71,7 @@ def add_parser(parent):
 
     show_parser = sub.add_parser('show')
     show_parser.add_argument('--keys-only', '-k', action='store_true')
+    show_parser.add_argument('--prefix', '-p', default='')
     show_parser.add_argument('path', nargs='+')
     show_parser.set_defaults(handler=handle_show)
 
