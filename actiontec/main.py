@@ -17,11 +17,15 @@ def parse_args():
     p.add_argument('--debug', action='store_const',
             const=logging.DEBUG,
             dest='loglevel')
+    p.add_argument('--quiet', '-q', action='store_const',
+            const=logging.WARN,
+            dest='loglevel')
     p.add_argument('--password', '-p')
     p.add_argument('--username', '-u', default='admin')
     p.add_argument('--ip', '-i', default='192.168.1.1')
     p.add_argument('--timeout', '-t', default=10, type=int)
-    p.add_argument('--config', '-f')
+    p.add_argument('--config', '-f',
+            default=os.environ.get('ACTIONTEC_CONFIG'))
 
     sub = p.add_subparsers()
 
