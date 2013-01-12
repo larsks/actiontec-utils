@@ -6,7 +6,7 @@ import argparse
 import logging
 import pprint
 
-from .. import confparser
+import actiontec.confparser as confparser
 
 def handle_show(at, cfg, opts):
     if opts.prefix and not opts.prefix.endswith('/'):
@@ -32,7 +32,7 @@ def handle_show(at, cfg, opts):
         elif opts.keys_only:
             print '\n'.join(fwcfg[path.split('/')[-1]].keys())
         else:
-            pprint.pprint(fwcfg)
+            print '\n'.join(['%s %s' % (k,v) for k,v in fwcfg.flatten()])
 
 def handle_set(at, cfg, opts):
     if opts.prefix and not opts.prefix.endswith('/'):
