@@ -20,11 +20,23 @@ def flatten(d, prefix=''):
 
     for k,v in d.items():
         if isinstance(v, dict):
-            paths.extend(flatten(v, prefix='%s/%s' % (prefix, k)))
+            paths.extend(flatten(v, prefix='%s%s' % (
+                ('%s/' % prefix if prefix else ''),
+                k)))
         else:
             paths.append(('%s/%s' % (prefix,k), v))
 
     return paths
+
+def find(d, attr, val, k=None, prev=None):
+    if attr in d and d[attr] == val:
+        return {k: d}
+    else:
+        for k,v in d.items():
+            if isinstance(v, dict):
+                res = find(v, attr, val, k, d)
+                if res is not None:
+                    return res
 
 class FirewallConfig (dict):
     def lookup(self, path):
@@ -32,6 +44,9 @@ class FirewallConfig (dict):
 
     def flatten(self):
         return flatten(self)
+
+    def find(self, attr, val):
+        return find(self, attr, val)
 
 def dictify(data):
     '''Convert the tree structure produced by the OpenRG
@@ -107,4 +122,8 @@ class Parser(object):
 
         if self.data:
             return FirewallConfig(dictify(self.data[0]))
+
+if __name__ == '__main__':
+    p = Parser()
+    cfg = p.parse(open(sys.argv[1]).read())
 
