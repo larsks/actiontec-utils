@@ -30,7 +30,7 @@ def flatten(d, prefix=''):
 
 def find(d, attr, val, k=None, prev=None):
     if attr in d and d[attr] == val:
-        return {k: d}
+        return (k, d)
     else:
         for k,v in d.items():
             if isinstance(v, dict):
