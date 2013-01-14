@@ -5,20 +5,32 @@ import sys
 import argparse
 import logging
 
-import fwparser
+import actiontec.fwparser as fwparser
+import actiontec.confparser as confparser
 
-def handle_clear(at, cfg, opts):
-    logging.info('clearing clink1 firewall rules')
-    res, out = at.run('conf del fw/policy/%d/chain/fw_clink1_out/rule' % (
-        opts.policy))
-    res, out = at.run('conf del fw/policy/%d/chain/fw_clink1_in/rule' % (
-        opts.policy))
+def get_active_policy(fwcfg):
+    active_name = fwcfg.lookup('fw/policy/active')
+    active_policy = find(fwcfg.lookup('fw/policy'), 'name', active_name)
+    return active_policy[1]
 
-def handle_list(at, cfg, opts):
-    logging.info('listing firewall configuraiton')
-    res, out = at.run('conf print fw/policy/%d/chain' % opts.policy)
-    print out
-    return res
+def handle_show(at, cfg, opts):
+    logging.info('showing firewall configuraiton')
+
+    p = confparser.Parser()
+    res,out = at.run('conf print net_obj')
+    net_obj = p.parse(out)
+
+    for dir in [ 'in', 'out' ]:
+        obj_name = '%s_%s' % (
+                cfg.get('blacklist', 'blacklist'),
+                dir
+                )
+        res = net_obj.find('description', obj_name)
+        if res:
+            k, obj = res
+            print '%s:' % obj_name
+            for k,v in obj['item'].items():
+                print v['ip'], v['netmask']
 
 def handle_apply(at, cfg, opts):
     logging.info('populating firewall rules')
@@ -42,13 +54,11 @@ def add_parser(sub):
     parser_fw.add_argument('--nocommit', '-n', action='store_true')
 
     fwsub = parser_fw.add_subparsers()
-    clear_parser = fwsub.add_parser('clear')
-    clear_parser.set_defaults(handler=handle_clear)
 
     apply_parser = fwsub.add_parser('apply')
     apply_parser.add_argument('rules')
     apply_parser.set_defaults(handler=handle_apply)
 
-    list_parser = fwsub.add_parser('list')
-    list_parser.set_defaults(handler=handle_list)
+    show_parser = fwsub.add_parser('show')
+    show_parser.set_defaults(handler=handle_show)
 
